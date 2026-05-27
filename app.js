@@ -155,12 +155,27 @@ function updateParticipantsList() {
   } else {
     spinBtn.disabled = false;
     
+    // Contar ocurrencias para detectar duplicados
+    const occurrences = {};
+    participants.forEach(name => {
+      occurrences[name] = (occurrences[name] || 0) + 1;
+    });
+    
     participants.forEach((name, index) => {
       const li = document.createElement('li');
       
       const span = document.createElement('span');
       span.className = 'name-text';
       span.textContent = name;
+      
+      // Verificar si el nombre está repetido en la lista total
+      if (occurrences[name] > 1) {
+        li.classList.add('item-duplicado');
+        const badge = document.createElement('span');
+        badge.className = 'duplicate-badge';
+        badge.textContent = ' (Repetido)';
+        span.appendChild(badge);
+      }
       
       const removeBtn = document.createElement('button');
       removeBtn.className = 'btn-remove';
@@ -200,6 +215,12 @@ function addManualNames() {
     // 4. Finalmente, pasa la matriz por un .filter() para eliminar strings vacíos.
     .filter(name => name !== '');
     
+  // Analizar el array en busca de duplicados en la entrada manual
+  const inputDuplicates = cleanNames.filter((name, idx) => cleanNames.indexOf(name) !== idx);
+  if (inputDuplicates.length > 0) {
+    console.log('Se detectaron nombres repetidos en la entrada:', [...new Set(inputDuplicates)]);
+  }
+  
   if (cleanNames.length > 0) {
     // 5. Inserta este array limpio en la variable de participantes y redibuja.
     participants = [...participants, ...cleanNames];
@@ -207,7 +228,6 @@ function addManualNames() {
     updateParticipantsList();
   }
 }
-
 function deleteParticipant(index) {
   if (isSpinning) return;
   

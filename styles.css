@@ -1187,3 +1187,23 @@ textarea::-webkit-scrollbar-thumb:hover,
   transform: none;
   box-shadow: none;
 }
+
+/* Indicadores de nombres duplicados */
+.item-duplicado .name-text {
+  color: #FF6B6B !important; /* Rojo suave de advertencia */
+  font-weight: 600;
+}
+
+.duplicate-badge {
+  color: #FF6B6B;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-left: 8px;
+  background-color: rgba(255, 107, 107, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  display: inline-block;
+  vertical-align: middle;
+}
