@@ -923,68 +923,7 @@ textarea::-webkit-scrollbar-thumb:hover,
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.8);
 }
 
-/* Media Query para el Ticket Responsivo */
-@media (max-width: 600px) {
-  .modal-card.ticket-layout {
-    flex-direction: column;
-    max-width: 360px;
-  }
-  .ticket-body {
-    width: 100%;
-    padding: 24px;
-  }
-  .ticket-stub {
-    width: 100%;
-    border-left: none;
-    border-top: 2px dashed rgba(255, 255, 255, 0.25);
-    padding: 24px;
-    height: 160px;
-    justify-content: flex-start;
-    gap: 16px;
-  }
-  .stub-info {
-    margin-top: 0;
-  }
-  /* Re-posicionar las muescas en modo vertical */
-  .notch-left {
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.8);
-  }
-  .notch-right {
-    bottom: -12px;
-    top: auto;
-    left: 50%;
-    transform: translateX(-50%);
-    border-left: none;
-    border-top: 1px solid var(--border-color);
-    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.8);
-  }
-  .notch-top {
-    left: -12px;
-    top: auto;
-    bottom: 148px; /* 160px - 12px */
-    transform: translateY(50%);
-    border-bottom: none;
-    border-right: 1px solid var(--border-color);
-    box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.8);
-  }
-  .notch-bottom {
-    right: -12px;
-    left: auto;
-    bottom: 148px;
-    transform: translateY(50%);
-    border-top: none;
-    border-left: 1px solid var(--border-color);
-    box-shadow: inset 3px 0 5px rgba(0, 0, 0, 0.8);
-  }
-  #winner-name {
-    font-size: 24px;
-  }
-}
+/* Media Query para el Ticket Responsivo se unificó abajo con 768px */
 
 /* Animaciones */
 @keyframes pulse {
@@ -1020,55 +959,139 @@ textarea::-webkit-scrollbar-thumb:hover,
   100% { transform: scale(1) rotate(0); }
 }
 
-/* Responsividad para pantallas pequeñas */
-@media (max-width: 1024px) {
+/* Responsividad para móviles y tablets (768px o menor) */
+@media (max-width: 768px) {
   .app-container {
-    flex-direction: column-reverse; /* La ruleta arriba y los controles abajo */
+    flex-direction: column; /* Controles arriba, ruleta abajo */
     overflow-y: auto;
     height: auto;
   }
+  
   .sidebar {
     width: 100%;
     height: auto;
     border-right: none;
     border-bottom: 1px solid var(--border-color);
   }
+  
   .main-content {
     padding: 24px;
     height: auto;
-    min-height: 650px;
+    min-height: unset;
   }
+  
   .wheel-layout-row {
     flex-direction: column;
-    gap: 20px;
+    gap: 24px;
+    width: 100%;
   }
+  
   .wheel-container {
-    width: 400px;
-    height: 400px;
+    width: 100%;
+    max-width: 450px;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
+  
   #wheel-canvas {
-    width: 400px;
-    height: 400px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
   }
+  
   .ticker-box {
     width: 100%;
-    max-width: 400px;
+    max-width: 450px;
     height: 90px;
     border-left-width: 2px;
     border-top-width: 6px;
   }
-}
+  
+  /* Menú de velocidad integrado de forma que no tape la ruleta */
+  .floating-control-menu {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    margin: 20px auto 0 auto;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+    z-index: 10;
+  }
 
-@media (max-width: 480px) {
-  .wheel-container {
-    width: 300px;
-    height: 300px;
+  /* Ticket del Ganador Vertical */
+  .modal-card.ticket-layout {
+    flex-direction: column;
+    max-width: 360px;
   }
-  #wheel-canvas {
-    width: 300px;
-    height: 300px;
+  
+  .ticket-body {
+    width: 100%;
+    padding: 24px;
+    gap: 14px;
   }
-  .modal-footer {
+  
+  .ticket-stub {
+    width: 100%;
+    border-left: none;
+    border-top: 2px dashed rgba(255, 255, 255, 0.3); /* perforación horizontal */
+    padding: 24px;
+    height: 160px;
+    justify-content: flex-start;
+    gap: 16px;
+    background-color: rgba(255, 255, 255, 0.025);
+  }
+  
+  .stub-info {
+    margin-top: 0;
+  }
+  
+  /* Re-posicionar las muescas en el ticket vertical */
+  .notch-left {
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.8);
+  }
+  
+  .notch-right {
+    bottom: -12px;
+    top: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: none;
+    border-top: 1px solid var(--border-color);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.8);
+  }
+  
+  .notch-top {
+    left: -12px;
+    top: auto;
+    bottom: 148px; /* stub height 160px - half notch 12px */
+    transform: translateY(50%);
+    border-bottom: none;
+    border-right: 1px solid var(--border-color);
+    box-shadow: inset -3px 0 5px rgba(0, 0, 0, 0.8);
+  }
+  
+  .notch-bottom {
+    right: -12px;
+    left: auto;
+    bottom: 148px;
+    transform: translateY(50%);
+    border-top: none;
+    border-left: 1px solid var(--border-color);
+    box-shadow: inset 3px 0 5px rgba(0, 0, 0, 0.8);
+  }
+  
+  #winner-name {
+    font-size: 24px;
+  }
+  
+  .modal-footer.vertical-footer {
     flex-direction: column;
   }
 }
