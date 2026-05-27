@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ruleta de la Suerte interactiva para directos. Introduce participantes manuales, hazla girar y obtén ganadores con efectos premium.">
+  <title>Ruleta de la Suerte - ImArixu Premium</title>
+  <!-- Google Fonts: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti Library from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Elementos Decorativos Flotantes en el Fondo -->
+  <div class="bg-shape shape-x shape-x-1" aria-hidden="true">✕</div>
+  <div class="bg-shape shape-x shape-x-2" aria-hidden="true">✕</div>
+  <div class="bg-shape shape-circle shape-circle-1" aria-hidden="true"></div>
+  <div class="bg-shape shape-circle shape-circle-2" aria-hidden="true"></div>
+  <div class="bg-shape shape-line shape-line-1" aria-hidden="true">
+    <svg viewBox="0 0 100 20" width="120" height="24">
+      <path d="M0,10 Q25,0 50,10 T100,10" fill="none" stroke="currentColor" stroke-width="3.5" />
+    </svg>
+  </div>
+  <div class="bg-shape shape-line shape-line-2" aria-hidden="true">
+    <svg viewBox="0 0 100 20" width="120" height="24">
+      <path d="M0,10 Q25,20 50,10 T100,10" fill="none" stroke="currentColor" stroke-width="3.5" />
+    </svg>
+  </div>
+
+  <!-- Marquesina Promocional -->
+  <div class="marquee-banner" role="banner">
+    <div class="marquee-content">
+      <span>🚀 Código ARIXU en la tienda 🎮</span>
+      <span>💜 Apoya al canal para más regalitos 🎁</span>
+      <span>🚀 Código ARIXU en la tienda 🎮</span>
+      <span>💜 Apoya al canal para más regalitos 🎁</span>
+      <span>🚀 Código ARIXU en la tienda 🎮</span>
+      <span>💜 Apoya al canal para más regalitos 🎁</span>
+      <span>🚀 Código ARIXU en la tienda 🎮</span>
+      <span>💜 Apoya al canal para más regalitos 🎁</span>
+    </div>
+  </div>
+
+  <div class="app-container">
+    <!-- Panel Lateral de Controles -->
+    <aside class="sidebar" role="complementary">
+      <header class="sidebar-header">
+        <div class="logo-container">
+          <svg class="twitch-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+          </svg>
+          <span class="twitch-badge">En Vivo</span>
+        </div>
+        <h1>Ruleta de la Suerte</h1>
+        <p class="channel-title">Especial para directos de <span class="highlight">ImArixu</span></p>
+      </header>
+
+      <!-- Módulo Entrada Manual -->
+      <section class="control-section" aria-labelledby="manual-section-title">
+        <h2 id="manual-section-title" class="section-title">Participantes Manuales</h2>
+        <div class="textarea-wrapper">
+          <textarea id="manual-input" rows="8" placeholder="pega aquí los nombres"></textarea>
+        </div>
+        <button id="add-manual-btn" class="btn btn-primary btn-full">
+          <span>Añadir a Ruleta</span>
+        </button>
+      </section>
+
+      <!-- Lista de Participantes Activos -->
+      <section class="control-section flex-grow" aria-labelledby="list-section-title">
+        <div class="section-header-row">
+          <h2 id="list-section-title" class="section-title">Participantes (<span id="participants-count">0</span>)</h2>
+          <button id="clear-all-btn" class="btn-text-link">Limpiar Todo</button>
+        </div>
+        <div class="list-container">
+          <ul id="participants-list" class="names-list">
+            <!-- Nombres cargados dinámicamente -->
+            <li class="empty-state">No hay participantes aún.</li>
+          </ul>
+        </div>
+        <button id="reset-counter-btn" class="btn btn-reset-counter btn-full">Reset Contador</button>
+      </section>
+    </aside>
+
+    <!-- Área Principal de la Ruleta -->
+    <main class="main-content" role="main">
+      <div class="wheel-outer-wrapper">
+        <div class="wheel-layout-row">
+          <div class="wheel-container">
+            <!-- Puntero indicador arriba en el centro -->
+            <div class="wheel-pointer">
+              <svg viewBox="0 0 24 24" width="40" height="40">
+                <path d="M12 24l-8-12h6V0h4v12h6z" />
+              </svg>
+            </div>
+            <!-- Canvas de la Ruleta -->
+            <canvas id="wheel-canvas" width="600" height="600"></canvas>
+          </div>
+          
+          <!-- Mini Rectángulo Ticker de Nombres -->
+          <div class="ticker-box" aria-live="polite">
+            <div class="ticker-title">Apuntando a:</div>
+            <div class="ticker-name-wrapper">
+              <span id="ticker-current-name">-</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="actions-container">
+          <button id="spin-btn" class="btn btn-spin btn-lg">
+            <span class="btn-spin-glow"></span>
+            <span class="btn-spin-text">¡GIRAR RULETA!</span>
+          </button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal de Ganador -->
+  <div id="winner-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card ticket-layout">
+      <!-- Muescas de recorte del Ticket (Semicírculos) -->
+      <div class="ticket-notch notch-left"></div>
+      <div class="ticket-notch notch-right"></div>
+      <div class="ticket-notch notch-top"></div>
+      <div class="ticket-notch notch-bottom"></div>
+      
+      <!-- Cuerpo del Ticket (70% del ancho) -->
+      <div class="ticket-body">
+        <div class="ticket-meta">
+          <span id="ticket-serial-number" class="ticket-serial">TICKET Nº: ARIXU-001</span>
+          <span class="ticket-category">EMISIÓN VIP</span>
+        </div>
+        
+        <div class="winner-trophy">
+          <svg viewBox="0 0 24 24" width="44" height="44">
+            <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v3c0 2.42 1.72 4.44 4.005 4.901C7.96 15.902 9.771 17 12 17s4.04-1.098 4.995-2.099C19.28 14.44 21 12.42 21 10V7c0-1.1-.9-2-2-2zM5 10V7h2v3H5zm14 0h-2V7h2v3zM12 19c-1.63 0-3 1.37-3 3h6c0-1.63-1.37-3-3-3z"/>
+          </svg>
+        </div>
+        
+        <h2 id="modal-title">¡Tenemos un Ganador!</h2>
+        
+        <div class="winner-box gold-ticket-box">
+          <span id="winner-name">NombreDelGanador</span>
+        </div>
+        
+        <div class="ticket-footer-row">
+          <div class="barcode" aria-hidden="true"></div>
+          <span class="ticket-footer-brand">ImArixu Live Prize</span>
+        </div>
+      </div>
+      
+      <!-- Talón del Ticket (30% del ancho) -->
+      <div class="ticket-stub">
+        <div class="stub-info">
+          <div class="stub-label">SORTEO</div>
+          <div class="stub-draw-id" id="stub-draw-number">#001</div>
+        </div>
+        <div class="modal-footer vertical-footer">
+          <button id="modal-remove-btn" class="btn btn-primary btn-full">Eliminar ganador y seguir jugando</button>
+          <button id="modal-close-btn" class="btn btn-secondary-outline btn-full">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menú Flotante de Control de Velocidad -->
+  <div class="floating-control-menu" role="region" aria-label="Control de Velocidad de la Ruleta">
+    <div class="menu-title">Velocidad de Giro</div>
+    <div class="slider-container">
+      <span class="slider-label">0.25x</span>
+      <input type="range" id="speed-multiplier" min="0.25" max="3.0" step="0.05" value="1.0" aria-valuemin="0.25" aria-valuemax="3.0" aria-valuenow="1.0">
+      <span class="slider-label">3.0x</span>
+    </div>
+    <div class="multiplier-value">Multiplicador: <span id="multiplier-display">1.0x</span></div>
+  </div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
