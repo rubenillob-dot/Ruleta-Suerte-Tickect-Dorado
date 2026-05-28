@@ -65,6 +65,31 @@ window.addEventListener('DOMContentLoaded', () => {
   modalCloseBtn.addEventListener('click', closeWinnerModal);
   modalRemoveBtn.addEventListener('click', removeWinnerAndContinue);
 
+  // Modal de Instrucciones y requisitos de participación
+  const instructionsModal = document.getElementById('instructions-modal');
+  const instructionsBtn = document.getElementById('instructions-btn');
+  const instructionsCloseBtn = document.getElementById('instructions-close-btn');
+
+  if (instructionsBtn && instructionsModal) {
+    instructionsBtn.addEventListener('click', () => {
+      instructionsModal.style.display = 'flex';
+    });
+  }
+
+  if (instructionsCloseBtn && instructionsModal) {
+    instructionsCloseBtn.addEventListener('click', () => {
+      instructionsModal.style.display = 'none';
+    });
+  }
+
+  if (instructionsModal) {
+    instructionsModal.addEventListener('click', (e) => {
+      if (e.target === instructionsModal) {
+        instructionsModal.style.display = 'none';
+      }
+    });
+  }
+
   // Control de velocidad
   if (speedMultiplierInput && multiplierDisplay) {
     speedMultiplierInput.addEventListener('input', (e) => {
@@ -551,6 +576,9 @@ function showWinner(index) {
   playWinnerFanfare();
 }
 
+// ==========================================
+// PANELES Y MODAL DE GANADOR (RESOLUCIÓN)
+// ==========================================
 function closeWinnerModal() {
   winnerModal.classList.add('hidden');
 }

@@ -1008,16 +1008,31 @@ textarea::-webkit-scrollbar-thumb:hover,
   }
   
   /* Menú de velocidad integrado de forma que no tape la ruleta */
+  .btn-instructions {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    margin: 20px auto 10px auto;
+    width: 100%;
+    max-width: 450px;
+    display: block;
+  }
+
   .floating-control-menu {
     position: relative;
     bottom: auto;
     right: auto;
-    margin: 20px auto 0 auto;
+    margin: 0 auto;
     width: 100%;
     max-width: 450px;
     box-shadow: none;
     border: 1px solid var(--border-color);
     z-index: 10;
+  }
+
+  .instructions-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   /* Ticket del Ganador Vertical */
@@ -1230,3 +1245,242 @@ textarea::-webkit-scrollbar-thumb:hover,
   display: inline-block;
   vertical-align: middle;
 }
+
+/* ==========================================
+/* BOTÓN DE INSTRUCCIONES
+/* ========================================== */
+.btn-instructions {
+  position: fixed;
+  bottom: 155px; /* Altura del menú de velocidad (120px) + bottom (20px) + margen (15px) */
+  right: 20px;
+  width: 230px;
+  z-index: 999;
+  background-color: #18181b;
+  border: 2px solid var(--twitch-purple);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 12px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.btn-instructions:hover {
+  background-color: #232329;
+  border-color: var(--twitch-purple-light);
+  box-shadow: 0 0 12px var(--twitch-purple-glow);
+  transform: translateY(-1px);
+}
+
+.btn-instructions:active {
+  transform: translateY(1px);
+}
+
+/* ==========================================
+/* MODAL DE INSTRUCCIONES
+/* ========================================== */
+.modal-card.instructions-layout {
+  width: 95%;
+  max-width: 800px;
+  padding: 30px 24px;
+  position: relative;
+  background-color: var(--bg-dark-card);
+  border: 2px solid var(--twitch-purple);
+  box-shadow: 
+    0 25px 65px rgba(0, 0, 0, 0.9),
+    0 0 35px var(--twitch-purple-glow-strong);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.instructions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.instructions-col-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.instructions-col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+.instructions-layout .points-table td {
+  padding: 6px 12px;
+}
+
+.btn-close-x {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.btn-close-x:hover {
+  color: white;
+}
+
+.instructions-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#instructions-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  color: white;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.points-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.points-table th {
+  text-align: left;
+  padding: 8px 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.points-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  color: var(--text-main);
+}
+
+.points-table tr.table-divider td {
+  border-bottom: 1px solid var(--border-color);
+  padding: 4px 0;
+}
+
+.pts-val {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  text-align: right;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.15);
+}
+
+.mult-val {
+  color: var(--accent-magenta);
+  font-weight: 700;
+  text-align: right;
+  text-shadow: 0 0 8px rgba(255, 0, 127, 0.15);
+}
+
+.golden-ticket-block {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(218, 165, 32, 0.05) 100%);
+  border: 1px solid #FFD700;
+  border-radius: 8px;
+  padding: 14px 18px;
+  text-align: center;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.15);
+}
+
+.golden-ticket-block h3 {
+  color: #FFD700;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.golden-ticket-block p {
+  color: var(--text-main);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* ==========================================
+/* DETALLES DE PARTICIPACIÓN & AYUDA
+/* ========================================== */
+.instructions-divider {
+  border: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 15px 0 5px 0;
+}
+
+.requirements-block {
+  background: rgba(235, 4, 0, 0.06);
+  border: 1px solid rgba(235, 4, 0, 0.25);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 5px;
+}
+
+.requirements-block h4 {
+  color: #FF5A5A;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.requirements-block p {
+  color: var(--text-main);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.help-command-block {
+  padding: 4px 6px;
+}
+
+.help-command-block h4 {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+.help-command-block p {
+  color: var(--text-main);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.highlight-cyan {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.2);
+}
+
+code.highlight-cyan {
+  background-color: rgba(0, 229, 255, 0.1);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 13px;
+}
+

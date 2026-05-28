@@ -168,6 +168,97 @@
     </div>
   </div>
 
+  <!-- Modal de Instrucciones -->
+  <div id="instructions-modal" class="modal-overlay" style="display: none;" role="dialog" aria-modal="true" aria-labelledby="instructions-title">
+    <div class="modal-card instructions-layout">
+      <button id="instructions-close-btn" class="btn-close-x" aria-label="Cerrar modal">&times;</button>
+      
+      <div class="instructions-body">
+        <h2 id="instructions-title">CÓMO PARTICIPAR</h2>
+        
+        <div class="instructions-grid">
+          <!-- Columna Izquierda: Tabla de Puntos -->
+          <div class="instructions-col-left">
+            <table class="points-table">
+              <thead>
+                <tr>
+                  <th>Acción</th>
+                  <th>Puntos / Multiplicador</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Ver durante 5 minutos</td>
+                  <td class="pts-val">+10</td>
+                </tr>
+                <tr>
+                  <td>Reclamar bonificaciones especiales</td>
+                  <td class="pts-val">+50</td>
+                </tr>
+                <tr>
+                  <td>Participa en un raid</td>
+                  <td class="pts-val">+250</td>
+                </tr>
+                <tr>
+                  <td>Sigue este canal</td>
+                  <td class="pts-val">+300</td>
+                </tr>
+                <tr>
+                  <td>Primer Cheer mensual</td>
+                  <td class="pts-val">+350</td>
+                </tr>
+                <tr>
+                  <td>Primer regalo de una sub mensual</td>
+                  <td class="pts-val">+500</td>
+                </tr>
+                <tr>
+                  <td>Racha de visualizaciones</td>
+                  <td class="pts-val">hasta +450</td>
+                </tr>
+                <tr class="table-divider">
+                  <td colspan="2"></td>
+                </tr>
+                <tr>
+                  <td>Sub de nivel 1</td>
+                  <td class="mult-val">Multiplicador por 1.2</td>
+                </tr>
+                <tr>
+                  <td>Sub de nivel 2</td>
+                  <td class="mult-val">Multiplicador por 1.4</td>
+                </tr>
+                <tr>
+                  <td>Sub de nivel 3</td>
+                  <td class="mult-val">Multiplicador por 2</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Columna Derecha: Bloques Informativos -->
+          <div class="instructions-col-right">
+            <div class="golden-ticket-block">
+              <h3>TICKET DORADO</h3>
+              <p>Al conseguir tu Ticket Dorado, te añadiremos automáticamente a la lista del sorteo.</p>
+            </div>
+
+            <div class="requirements-block">
+              <h4>¡IMPORTANTE PARA PARTICIPAR!</h4>
+              <p>Debes tener un mínimo de <strong class="highlight-cyan">5500 puntos</strong> para poder canjear tu ticket en el chat de Twitch. Una vez canjeado, entrarás automáticamente en la lista del sorteo.</p>
+            </div>
+
+            <div class="help-command-block">
+              <h4>¿DUDAS?</h4>
+              <p>Si tienes cualquier pregunta sobre cómo participar, escribe <code class="highlight-cyan">!ticket</code> en el chat de Twitch para recibir una ayuda rápida y automática.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón de Instrucciones -->
+  <button id="instructions-btn" class="btn-instructions">Instrucciones ℹ️</button>
+
   <!-- Menú Flotante de Control de Velocidad -->
   <div class="floating-control-menu" role="region" aria-label="Control de Velocidad de la Ruleta">
     <div class="menu-title">Velocidad de Giro</div>
