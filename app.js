@@ -193,30 +193,30 @@ document.addEventListener('DOMContentLoaded', () => {
   modalRemoveBtn.addEventListener('click', removeWinnerAndContinue);
 
   // Modal de Instrucciones y requisitos de participación
-  const instructionsModal = document.getElementById('instructions-modal');
-  const instructionsBtn = document.getElementById('instructions-btn');
-  const instructionsCloseBtn = document.getElementById('instructions-close-btn');
+  const modal = document.getElementById('modal-instrucciones');
+  const boton = document.getElementById('btn-instrucciones');
+  const cerrar = document.querySelector('.btn-close-x'); // Ajustado a la clase de la X
 
-  if (instructionsBtn && instructionsModal) {
-    instructionsBtn.addEventListener('click', () => {
-      console.log("Clic detectado en botón de instrucciones, aplicando clase modal-activo");
-      instructionsModal.classList.add('modal-activo');
-    });
+  // Forzamos la apertura
+  if (boton && modal) {
+    boton.onclick = function() {
+      modal.style.setProperty('display', 'flex', 'important');
+    };
   }
 
-  if (instructionsCloseBtn && instructionsModal) {
-    instructionsCloseBtn.addEventListener('click', () => {
-      instructionsModal.classList.remove('modal-activo');
-    });
+  // Forzamos el cierre
+  if (cerrar && modal) {
+    cerrar.onclick = function() {
+      modal.style.setProperty('display', 'none', 'important');
+    };
   }
 
-  if (instructionsModal) {
-    instructionsModal.addEventListener('click', (e) => {
-      if (e.target === instructionsModal) {
-        instructionsModal.classList.remove('modal-activo');
-      }
-    });
-  }
+  // Cierre al clicar fuera
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.setProperty('display', 'none', 'important');
+    }
+  };
 
   // Control de velocidad
   if (speedMultiplierInput && multiplierDisplay) {
