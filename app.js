@@ -17,6 +17,87 @@ let currentWinnerIndex = -1;
 let speedMultiplier = 1.0; // Multiplicador de velocidad de rotación
 let contadorSorteo = 1; // Contador global de sorteos
 
+// Gestión de persistencia con fallback y origen de archivos
+let activeStorage = null;
+let isStorageBlocked = false;
+
+// Verifica si un tipo de almacenamiento es accesible y funcional
+function testStorage(type) {
+  try {
+    const storage = window[type];
+    const testKey = '__storage_test__';
+    storage.setItem(testKey, testKey);
+    storage.removeItem(testKey);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+// Inicializa el almacenamiento activo con fallback a sessionStorage o en memoria
+function initStorage() {
+  if (testStorage('localStorage')) {
+    activeStorage = window.localStorage;
+  } else if (testStorage('sessionStorage')) {
+    activeStorage = window.sessionStorage;
+    isStorageBlocked = true;
+  } else {
+    // Almacenamiento en memoria como último recurso
+    const memoryStore = {};
+    activeStorage = {
+      getItem: (key) => memoryStore[key] !== undefined ? memoryStore[key] : null,
+      setItem: (key, value) => { memoryStore[key] = String(value); },
+      removeItem: (key) => { delete memoryStore[key]; },
+      clear: () => { for (const key in memoryStore) delete memoryStore[key]; }
+    };
+    isStorageBlocked = true;
+  }
+
+  if (isStorageBlocked) {
+    showPrivacyWarning();
+  }
+}
+
+// Muestra una alerta visual pequeña si el almacenamiento persistente está bloqueado
+function showPrivacyWarning() {
+  if (document.getElementById('privacy-warning')) return;
+
+  const sidebar = document.querySelector('.sidebar');
+  if (!sidebar) return;
+
+  const warningDiv = document.createElement('div');
+  warningDiv.id = 'privacy-warning';
+  warningDiv.className = 'privacy-warning-banner';
+  
+  // Icono SVG de advertencia estilizado
+  warningDiv.innerHTML = `
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+      <line x1="12" y1="9" x2="12" y2="13"></line>
+      <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+    <span>Modo privacidad detectado: los cambios no se guardarán al cerrar el navegador.</span>
+  `;
+
+  const header = sidebar.querySelector('.sidebar-header');
+  if (header) {
+    header.insertAdjacentElement('afterend', warningDiv);
+  } else {
+    sidebar.prepend(warningDiv);
+  }
+}
+
+// Obtiene la URL absoluta a partir del origen y la ruta del proyecto para GitHub Pages
+function getAbsoluteUrl(path) {
+  const origin = window.location.origin;
+  const pathname = window.location.pathname;
+  if (!origin || origin === 'null') {
+    return path;
+  }
+  const baseFolder = pathname.substring(0, pathname.lastIndexOf('/') + 1);
+  return `${origin}${baseFolder}${path.replace(/^\//, '')}`;
+}
+
 // Paleta de colores requerida (Versión pastel para reducir fatiga visual)
 const colors = [
   '#B388FF', // Morado Pastel
@@ -49,17 +130,63 @@ const winnerNameSpan = document.getElementById('winner-name');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 const modalRemoveBtn = document.getElementById('modal-remove-btn');
 
+// Evita la ejecución excesiva de código (debounce)
+function debounce(func, delay) {
+  let timeoutId;
+  return function (...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}
+
 // ==========================================
 // INICIALIZACIÓN
 // ==========================================
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   setupCanvasDPI();
+  
+  // Inicializar gestor de almacenamiento
+  initStorage();
+  
+  // Normalizar etiquetas script y link para asegurar rutas correctas en GitHub Pages
+  document.querySelectorAll('script[src]').forEach(script => {
+    const src = script.getAttribute('src');
+    if (src && !src.startsWith('http') && !src.startsWith('//') && !src.startsWith('/')) {
+      script.src = getAbsoluteUrl(src);
+    }
+  });
+  document.querySelectorAll('link[href]').forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && !href.startsWith('http') && !href.startsWith('//') && !href.startsWith('/')) {
+      link.href = getAbsoluteUrl(href);
+    }
+  });
+
+  // Recuperar lista del almacenamiento si existe
+  if (activeStorage) {
+    console.log("Cargando datos desde almacenamiento...");
+    const savedList = activeStorage.getItem('listaParticipantes');
+    if (savedList !== null) {
+      manualInput.value = savedList;
+    }
+  }
+  
   updateParticipantsList();
   
   // Event Listeners
   spinBtn.addEventListener('click', startSpin);
   addManualBtn.addEventListener('click', addManualNames);
   clearAllBtn.addEventListener('click', clearAllParticipants);
+  
+  // Guardar automáticamente al cambiar el contenido de forma eficiente
+  manualInput.addEventListener('input', debounce((e) => {
+    if (activeStorage) {
+      console.log("Guardando datos...");
+      activeStorage.setItem('listaParticipantes', e.target.value);
+    }
+  }, 300));
   
   // Modal buttons
   modalCloseBtn.addEventListener('click', closeWinnerModal);
@@ -72,20 +199,20 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (instructionsBtn && instructionsModal) {
     instructionsBtn.addEventListener('click', () => {
-      instructionsModal.style.display = 'flex';
+      instructionsModal.classList.remove('hidden');
     });
   }
 
   if (instructionsCloseBtn && instructionsModal) {
     instructionsCloseBtn.addEventListener('click', () => {
-      instructionsModal.style.display = 'none';
+      instructionsModal.classList.add('hidden');
     });
   }
 
   if (instructionsModal) {
     instructionsModal.addEventListener('click', (e) => {
       if (e.target === instructionsModal) {
-        instructionsModal.style.display = 'none';
+        instructionsModal.classList.add('hidden');
       }
     });
   }
@@ -228,16 +355,27 @@ function updateParticipantsList() {
 function addManualNames() {
   if (isSpinning) return;
   
-  // 1. Captura el valor del textarea.
-  const text = manualInput.value;
+  // Guardar valor actual en almacenamiento para asegurar la sincronización
+  if (activeStorage) {
+    console.log("Guardando datos...");
+    activeStorage.setItem('listaParticipantes', manualInput.value);
+  }
+  
+  // Obtener el valor desde almacenamiento para procesar los nombres
+  let text = '';
+  if (activeStorage) {
+    text = activeStorage.getItem('listaParticipantes') || '';
+  } else {
+    text = manualInput.value;
+  }
+  
   if (!text.trim()) return;
   
-  // 2. Usa el método .split() con una Expresión Regular (Regex) para dividir el texto
-  // utilizando: comas (,), puntos y coma (;), guiones (-), tabulaciones (\t), o saltos de línea (\n).
+  // Dividir el texto utilizando comas, puntos y coma, guiones, tabulaciones o saltos de línea
   const cleanNames = text.split(/[,\;\-\t\n\r]+/)
-    // 3. Pasa el resultado por un .map() aplicando .trim() a cada elemento.
+    // Limpiar espacios en blanco de cada nombre
     .map(name => name.trim())
-    // 4. Finalmente, pasa la matriz por un .filter() para eliminar strings vacíos.
+    // Eliminar nombres vacíos
     .filter(name => name !== '');
     
   // Analizar el array en busca de duplicados en la entrada manual
@@ -247,9 +385,13 @@ function addManualNames() {
   }
   
   if (cleanNames.length > 0) {
-    // 5. Inserta este array limpio en la variable de participantes y redibuja.
+    // Insertar nombres limpios en el array de participantes y actualizar
     participants = [...participants, ...cleanNames];
-    manualInput.value = ''; // Limpiar el input
+    manualInput.value = '';
+    // Limpiar el almacenamiento tras añadir exitosamente los nombres a la ruleta
+    if (activeStorage) {
+      activeStorage.removeItem('listaParticipantes');
+    }
     updateParticipantsList();
   }
 }
@@ -263,7 +405,12 @@ function deleteParticipant(index) {
 function clearAllParticipants() {
   if (isSpinning) return;
   
+  // Limpiar participantes, input de texto y almacenamiento
   participants = [];
+  manualInput.value = '';
+  if (activeStorage) {
+    activeStorage.removeItem('listaParticipantes');
+  }
   updateParticipantsList();
 }
 
