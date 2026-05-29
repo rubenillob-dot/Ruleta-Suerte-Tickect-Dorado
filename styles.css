@@ -1288,6 +1288,14 @@ textarea::-webkit-scrollbar-thumb:hover,
 /* ==========================================
 /* MODAL DE INSTRUCCIONES
 /* ========================================== */
+#instructions-modal {
+  display: none !important;
+}
+
+#instructions-modal.modal-activo {
+  display: flex !important;
+}
+
 .modal-card.instructions-layout {
   width: 95%;
   max-width: 800px;

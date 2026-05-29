@@ -199,20 +199,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (instructionsBtn && instructionsModal) {
     instructionsBtn.addEventListener('click', () => {
-      instructionsModal.classList.remove('hidden');
+      console.log("Clic detectado en botón de instrucciones, aplicando clase modal-activo");
+      instructionsModal.classList.add('modal-activo');
     });
   }
 
   if (instructionsCloseBtn && instructionsModal) {
     instructionsCloseBtn.addEventListener('click', () => {
-      instructionsModal.classList.add('hidden');
+      instructionsModal.classList.remove('modal-activo');
     });
   }
 
   if (instructionsModal) {
     instructionsModal.addEventListener('click', (e) => {
       if (e.target === instructionsModal) {
-        instructionsModal.classList.add('hidden');
+        instructionsModal.classList.remove('modal-activo');
       }
     });
   }
